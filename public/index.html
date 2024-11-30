@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Upload</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 text-gray-800">
+    <div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+      <h1 class="text-2xl font-bold text-center mb-6">Upload a File</h1>
+      <form
+        action="/upload"
+        method="POST"
+        enctype="multipart/form-data"
+        class="space-y-4"
+      >
+        <div class="flex items-center space-x-4">
+          <label
+            for="file"
+            class="px-4 py-2 bg-blue-500 text-white font-medium rounded-md cursor-pointer hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            Choose File
+          </label>
+          <span id="file-name" class="text-gray-600">No file chosen</span>
+          <input
+            type="file"
+            id="file"
+            name="file"
+            required
+            class="hidden"
+            onchange="updateFileName(this)"
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full py-2 px-4 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          Upload
+        </button>
+      </form>
+
+      <h2 class="text-xl font-semibold mt-8 mb-4">Uploaded Files</h2>
+      <ul id="file-list" class="list-disc pl-5 space-y-2 text-blue-500"></ul>
+    </div>
+
+    <script>
+      function updateFileName(input) {
+        const fileName = input.files[0]?.name || "No file chosen";
+        document.getElementById("file-name").textContent = fileName;
+      }
+
+      async function fetchFiles() {
+        const response = await fetch("/files");
+        const files = await response.json();
+        const fileList = document.getElementById("file-list");
+        fileList.innerHTML = "";
+        files.forEach((file) => {
+          const listItem = document.createElement("li");
+          listItem.innerHTML = `<a href="/uploads/${file}" target="_blank" class="hover:underline">${file}</a>`;
+          fileList.appendChild(listItem);
+        });
+      }
+      fetchFiles();
+    </script>
+  </body>
+</html>
